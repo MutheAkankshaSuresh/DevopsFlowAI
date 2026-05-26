@@ -1,0 +1,44 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: devopsflow_mysql
+    environment:
+      MYSQL_DATABASE: devopsflow_ai
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: devopsflow
+      MYSQL_PASSWORD: devopsflow
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    container_name: devopsflow_backend
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/devopsflow_ai
+      DB_USERNAME: devopsflow
+      DB_PASSWORD: devopsflow
+      DB_DRIVER: com.mysql.cj.jdbc.Driver
+      JWT_SECRET: devopsflow-ai-docker-secret-key-please-change-before-prod
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build: ./frontend
+    container_name: devopsflow_frontend
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"
+
+volumes:
+  mysql_data:

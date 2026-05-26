@@ -1,0 +1,53 @@
+{
+  "info": {
+    "name": "DevOpsFlow AI",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/auth/login",
+        "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@devopsflow.ai\",\n  \"password\": \"admin123\"\n}" }
+      }
+    },
+    {
+      "name": "Dashboard",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/api/dashboard"
+      }
+    },
+    {
+      "name": "Create Task",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": "{{baseUrl}}/api/tasks",
+        "body": { "mode": "raw", "raw": "{\n  \"title\": \"Investigate production latency\",\n  \"description\": \"API response time crossed threshold after deployment\",\n  \"assignedToId\": 3,\n  \"priority\": \"HIGH\",\n  \"status\": \"PENDING\",\n  \"deadline\": \"2026-06-01\"\n}" }
+      }
+    },
+    {
+      "name": "Create Risky Deployment",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": "{{baseUrl}}/api/deployments",
+        "body": { "mode": "raw", "raw": "{\n  \"version\": \"v2.0.0-hotfix\",\n  \"environment\": \"production\",\n  \"status\": \"FAILED\",\n  \"deployedById\": 1,\n  \"releaseNotes\": \"Urgent auth hotfix with database migration\"\n}" }
+      }
+    }
+  ]
+}
